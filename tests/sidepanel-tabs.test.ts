@@ -244,14 +244,15 @@ test('side panel tabs open Page, reject stale metadata, refresh scoped data, fil
     elements.get('metadataView').children[3].children[1].textContent,
     '<script>example</script>',
   )
-  assert.equal(elements.get('metadataView').children[3].children.length, 4)
+  assert.equal(elements.get('metadataView').children[3].children.length, 2)
+  const additionalProperties = elements.get('metadataView').children[4]
+  assert.equal(additionalProperties.open, false)
+  assert.equal(additionalProperties.children[0].textContent, 'Other properties')
   assert.deepEqual(
-    JSON.parse(
-      elements.get('metadataView').children[3].children[3].textContent,
-    ),
+    JSON.parse(additionalProperties.children[1].children[1].textContent),
     ['Music', '<b>Live</b>', 'Music'],
   )
-  assert.equal(elements.get('metadataView').children.length, 4)
+  assert.equal(elements.get('metadataView').children.length, 5)
   assert.equal(
     elements.get('metadataView').children[2].textContent,
     'Open Graph',
@@ -302,7 +303,12 @@ test('side panel tabs open Page, reject stale metadata, refresh scoped data, fil
   assert.equal(image.src, 'blob:preview')
   assert.equal(imageEntries[3].children.length, 0)
   assert.equal(imageEntries[5].children.length, 0)
-  assert.equal(imageEntries[7].children.length, 0)
+  assert.equal(imageEntries.length, 6)
+  assert.equal(
+    elements.get('metadataView').children[4].children[1].children[1]
+      .textContent,
+    '1200',
+  )
   const reloadButton = imageEntries[0].children[0]
   assert.equal(reloadButton.attributes['aria-label'], 'Reload og:image image')
   assert.equal(reloadButton.disabled, true)
@@ -340,10 +346,17 @@ test('side panel tabs open Page, reject stale metadata, refresh scoped data, fil
       ],
     },
   })
+  const primaryEntries = elements.get('metadataView').children[3].children
+  assert.equal(primaryEntries.length, 8)
+  const otherProperties = elements.get('metadataView').children[4]
+  assert.equal(otherProperties.open, false)
+  const groupedEntries = [
+    ...primaryEntries,
+    ...otherProperties.children[1].children,
+  ]
   assert.deepEqual(
-    elements
-      .get('metadataView')
-      .children[3].children.filter((_, index) => index % 2 === 0)
+    groupedEntries
+      .filter((_, index) => index % 2 === 0)
       .map((node) => node.textContent),
     [
       'og:image',
@@ -357,7 +370,6 @@ test('side panel tabs open Page, reject stale metadata, refresh scoped data, fil
       'og:z',
     ],
   )
-  const groupedEntries = elements.get('metadataView').children[3].children
   assert.deepEqual(JSON.parse(groupedEntries[9].textContent), [
     'first',
     '<b>second</b>',

@@ -62,6 +62,7 @@ const renderMetadata = () => {
       continue
     }
     const list = document.createElement('dl')
+    const additionalList = document.createElement('dl')
     const grouped = groupMetadataEntries(entries)
     for (const entry of sortMetadata(grouped)) {
       const name = document.createElement('dt')
@@ -160,9 +161,23 @@ const renderMetadata = () => {
           reloadButton.disabled = true
         }
       }
-      list.append(name, value)
+      const additional =
+        key === 'openGraph' &&
+        !['og:image', 'og:title', 'og:description'].includes(
+          entry.key.toLowerCase(),
+        )
+      const targetList = additional ? additionalList : list
+      targetList.append(name, value)
     }
     nodes.push(list)
+    if (additionalList.children.length) {
+      const details = document.createElement('details')
+      details.className = 'metadata-additional'
+      const summary = document.createElement('summary')
+      summary.textContent = 'Other properties'
+      details.append(summary, additionalList)
+      nodes.push(details)
+    }
   }
   panelElements.metadataView.replaceChildren(...nodes)
 }

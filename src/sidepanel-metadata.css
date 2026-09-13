@@ -47,6 +47,17 @@
     }
   }
 
+  .metadata-additional > summary {
+    margin-bottom: 0.625rem;
+    color: var(--muted);
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 0.125rem solid var(--accent);
+      outline-offset: 0.125rem;
+    }
+  }
+
   .metadata-description {
     display: -webkit-box;
     -webkit-box-orient: vertical;
